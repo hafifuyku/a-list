@@ -3,4 +3,4 @@ An old list of celebrity gossip from 2004. We're taking **only the rumored relat
 
 Join Graph Commons, add yourself as editor to this graph and start working on it. Delete the relationships you have entered from the list here.
 
-The untouched version of the list can be found here: http://cl.ly/Ego5 it's from alt.gossip.celebrities
+The untouched version of the list can be found here: http://cl.ly/Ego5. It's from alt.gossip.celebrities
