@@ -223,36 +223,9 @@ dialog#about::backdrop{background:rgba(20,10,26,.62);backdrop-filter:blur(3px);-
   <div class="about-inner">
     <button class="about-close" aria-label="Close" data-close><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
     <h2 id="about-title">About this list</h2>
-    <p class="lede">Everything on this map is hearsay. The cards quote an anonymous celebrity rumor list word for word, and every line between two people comes from that same text. None of it has been checked.</p>
-    <p>Some of these claims were denied at the time, some contradict each other inside the list itself, and some accuse real people, many of them alive, of things they were never charged with. Read every card as “someone once claimed this”, never as fact.</p>
-
-    <h3>Where it came from</h3>
-    <p>The list called itself “A List”. Its compiler never gave a name and kept it in numbered versions; a copy of version 5.3 is dated 23 July 2003. The introduction, reproduced below, says the entries come from hearsay, rumor and gossip, some of it the compiler’s own guesses. It also admits that John Lithgow’s entry was made up on purpose, as a joke “reward” for mentioning the site on TV, and it proudly quotes Variety’s verdict on the whole thing.</p>
-    <p>The version mapped here is a later revision from around spring 2004: it mentions <i>Eternal Sunshine</i>, <i>The Passion of the Christ</i> and the Yankees’ trade for A-Rod. It kept circulating by email and on forums for years. The entries from Bernsen to Zombie come from one saved copy; the entries from Aaliyah to Sandra Bernhard come from the same revision as reposted on the AnandTech forums in July 2005, and their cards say so.</p>
-
-    <h3>In the compiler’s own words</h3>
-    <div id="intro" class="intro"></div>
-
-    <h3>How the map is built</h3>
-    <ul>
-      <li>Each entry on the list is a filled dot. People who are only named inside other entries are rings. Bands are rounded squares.</li>
-      <li><strong>Susanna Eng</strong> is flagged as a known hoax: no such actress, model or producer existed, and the claims attached to the name were fabricated. Her node is kept only to show what the list claimed.</li>
-      <li>The <strong>Scientologists</strong> toggle highlights the 26 people whose entries describe them as Scientologists, including former or disputed claims.</li>
-      <li>Zoom in and the dots turn into portraits. The coloured ring stays around people who are only named in other entries. Portraits are small thumbnails from Wikipedia/Wikimedia and IMDb, saved with this page in <code>avatars/</code>; rights remain with their owners. Sources are listed in <a href="CREDITS.md" target="_blank" rel="noopener">CREDITS.md</a>.</li>
-      <li><span class="edge" style="background:#d9577f"></span>Had a relation with: from the list’s “Linked with”, “Formerly with”, “Married to” and similar wording, plus a few affairs it describes in passing.</li>
-      <li><span class="edge" style="background:#e07d16"></span>Had beef with: open fights, and places where the list says one named person wronged another (cheating, mistreatment, stalking, kiss-and-tell).</li>
-      <li><span class="edge" style="background:repeating-linear-gradient(90deg,#6e5ae0 0 4px,transparent 4px 7px)"></span>Alleged abuse: claims of violence or sexual assault, and links the list says began while someone was under 18. These are kept apart so they are never shown as relationships.</li>
-      <li>Different spellings of the same name are merged into one dot. Each line shows the list’s own words for it on the card.</li>
-    </ul>
-
-    <h3>The list’s shorthand</h3>
-    <dl id="gloss-all"></dl>
-
-    <h3>Sources</h3>
-    <ul>
-      <li><a href="https://accountant247.tripod.com/gossip.html" target="_blank" rel="noopener">A copy of version 5.3 (July 2003)</a>, with the compiler’s introduction and credits</li>
-      <li><a href="https://forums.anandtech.com/threads/very-very-gay-cute-website.1639368/" target="_blank" rel="noopener">The 2004 revision reposted on the AnandTech forums</a>, July 2005, “courtesy of an e-mail from a friend”; source of the entries from Aaliyah to Sandra Bernhard</li>
-    </ul>
+    <p class="lede">Everything here is hearsay, quoted word for word from an anonymous celebrity rumor list from around 2004. None of it has been checked. Read every card as “someone once claimed this”, never as fact.</p>
+    <p>Filled dots have their own entry, rings are only mentioned in someone else’s, and squares are bands. Susanna Eng is a known hoax. Portraits are Wikipedia and IMDb thumbnails (<a href="CREDITS.md" target="_blank" rel="noopener">credits</a>).</p>
+    <p>Sources: <a href="https://accountant247.tripod.com/gossip.html" target="_blank" rel="noopener">version 5.3 (2003)</a> and <a href="https://forums.anandtech.com/threads/very-very-gay-cute-website.1639368/" target="_blank" rel="noopener">the 2004 revision on AnandTech</a>.</p>
     <div class="about-actions"><button data-close>Got it</button></div>
   </div>
 </dialog>
@@ -830,8 +803,6 @@ function keyHTML(found){
   if(!found.length) return '';
   return `<div class="key"><h3>Shorthand in this entry</h3><dl>${found.map(i=>`<dt>${esc(GLOSS[i][0])}</dt><dd>${esc(GLOSS[i][2])}</dd>`).join('')}</dl></div>`;
 }
-document.getElementById('intro').innerHTML = (()=>{ const L=DATA.intro||[]; const defs=L.filter(l=>/^(FOD|L_+|B_+|A "beard"|A "merkin")/.test(l)); const rest=L.filter(l=>!defs.includes(l)); const before=rest.slice(0,2), after=rest.slice(2); return before.map(p=>`<p>${esc(p)}</p>`).join('')+`<div class="defs">${defs.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`+after.map(p=>`<p>${esc(p)}</p>`).join(''); })();
-document.getElementById('gloss-all').innerHTML = GLOSS.map(([l,,d])=>`<dt>${esc(l)}</dt><dd>${esc(d)}</dd>`).join('');
 
 function avatarHTML(n,cls='av'){
   const shape = n.group?' sq':'', ring = n.entry?'':' ring';
