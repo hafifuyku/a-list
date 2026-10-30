@@ -1,6 +1,30 @@
-# a-list
-An old list of celebrity gossip from 2004. We're taking **only the rumored relationship parts** and turning it into a graph at https://graphcommons.com/graphs/cc044ceb-6876-4385-b785-28e39f44c11f. 
+# The A-List, mapped
 
-Join Graph Commons, add yourself as editor to this graph and start working on it. Delete the relationships you have entered from the list here.
+Live at https://a-list.dasbot.com
 
-The untouched version of the list can be found here: https://drive.google.com/file/d/13y2MI-Z2kkzXdS3Ui836EzGPvQVONPPA/view?usp=sharing. It's from alt.gossip.celebrities
+A single static page: `index.html` plus a local `avatars/` folder.
+
+## Upload
+
+Copy the whole folder to any static host, keeping these paths together:
+
+```
+index.html
+avatars/            (1903 portrait thumbnails)
+CREDITS.md
+a-list.txt          (the source list, not loaded by the page)
+```
+
+There is no build step and no server-side code. Open `index.html` from the folder root. All image paths are relative, so the page also works in a subdirectory or straight from `file://`.
+
+## How the portraits work
+
+The page opens on a random well-connected person, zoomed in. The fit button shows the whole map. The **Scientologists** toggle highlights the 26 people whose entries describe them as Scientologists. Portraits are lazy-loaded as you zoom in; the overview is static and starts with the original coloured dots, then keeps any portraits already loaded. Cards open on click or from search — not on hover — and load the portrait on demand. Each card has a Wikipedia link, or a Wikipedia search link when no article exists. The files are 160×160 WebP thumbnails.
+
+1894 of the 1903 people have a portrait from Wikipedia/Wikimedia or IMDb. The other 9 use a generated placeholder avatar because no reliable portrait was found. `CREDITS.md` lists the source for every file; `avatars/manifest.json` contains the same data in machine-readable form.
+
+The portraits remain the property of their original photographers, studios, publishers and estates. They are used here only to identify the people named in the gossip list, which is itself unverified hearsay.
+
+## One flagged hoax
+
+**Susanna Eng** is a known internet hoax: no such actress, model or producer existed, and the claims attached to the name were fabricated. Her node is kept on the map only to show what the list claimed, and her card is marked **Hoax**.
