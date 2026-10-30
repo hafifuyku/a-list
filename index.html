@@ -110,6 +110,11 @@ body.has-dock .filters{right:calc(400px + var(--gutter))}
 .wiki-link{display:inline-flex;align-items:center;gap:5px;margin:0 0 14px;padding:5px 9px;border-radius:10px;background:#efe2e7;color:var(--paper-ink);font-size:12.5px;font-weight:500;text-decoration:none;line-height:1.2}
 .wiki-link:hover{background:#e6d3da}
 .wiki-link .ext{color:var(--paper-dim);font-size:11px}
+.card-actions{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.card-actions .wiki-link{margin:0}
+button.wiki-link{border:0;cursor:pointer;font-family:inherit}
+.wiki-link svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.wiki-link.copied{background:#dcebdc}
 .grp{margin:0 0 14px}
 .grp h3{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin:0 0 8px;color:var(--paper-ink)}
 .grp h3 .sw{width:20px;height:3px;border-radius:2px}
@@ -302,6 +307,12 @@ nodes.forEach(n=>{
   n.phase=(n.i*2.399963)%(Math.PI*2);
   n.dist=Math.hypot(n.x,n.y);
   n.key=n.name.normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase();
+});
+const bySlug = new Map();
+nodes.forEach(n=>{
+  const base=n.key.replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'p'+n.i;
+  let s=base, c=2; while(bySlug.has(s)) s=base+'-'+(c++);
+  n.slug=s; bySlug.set(s,n);
 });
 const loners = nodes.filter(n=>n.deg===0).length;
 const typeCount=[0,0,0]; links.forEach(l=>typeCount[l.type]++);
@@ -829,7 +840,8 @@ function buildCard(i){
             : 'No entry of their own. Named in other people’s entries.'
   }</p></div><button class="close" aria-label="Close card"><svg viewBox="0 0 14 14"><path d="M2 2l10 10M12 2L2 12"/></svg></button></div><div class="card-body">`;
   if(hoax) h+=`<div class="hoax-note"><strong>Known hoax.</strong> There is no such actress, model or producer; the relationships and feuds attributed to her were fabricated. The entry is kept only to show what the list claimed.</div>`;
-  h+=`<a class="wiki-link" href="${n.wiki}" target="_blank" rel="noopener">${n.wikiDirect?'Wikipedia':'Search Wikipedia'} <span class="ext" aria-hidden="true">↗</span></a>`;
+  h+=`<div class="card-actions"><a class="wiki-link" href="${n.wiki}" target="_blank" rel="noopener">${n.wikiDirect?'Wikipedia':'Search Wikipedia'} <span class="ext" aria-hidden="true">↗</span></a>`
+    +`<button class="wiki-link share" type="button"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M5 7l4.5-4.5M6.5 2.5h3v3M9.5 7.5v2h-7v-7h2"/></svg><span class="lbl">Share</span></button></div>`;
   if(n.entry){
     const g=glossify(n.text); h+=`<div class="verbatim">${g.html}</div>`+keyHTML(g.found);
     if(n.name==='John Lithgow') h+=`<p class="hint" style="margin:-8px 0 14px">The list’s own introduction says this entry was made up: “to reward him I made up something about him for his entry.”</p>`;
@@ -857,6 +869,7 @@ function openCard(i, docked){
   if(cardFor!==i || cardPinned!==docked){
     card.innerHTML=buildCard(i);
     card.querySelector('.close').onclick=()=>{unpin();};
+    const sb=card.querySelector('.share'); sb.onclick=()=>shareNode(i,sb);
     card.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{ const j=+b.dataset.i; pin(j, true); });
   }
   cardFor=i; cardPinned=docked;
@@ -894,12 +907,47 @@ function scheduleUnhover(){
     if(state.hover>=0){ state.hover=-1; }
   },100);
 }
+const BASE_TITLE=document.title;
+function shareURL(n){ return location.href.split('#')[0]+'#'+n.slug; }
+function setURL(n){
+  try{ history.replaceState(null,'', n ? '#'+n.slug : location.pathname+location.search); }catch(_){}
+  document.title = n ? `${n.name} · ${BASE_TITLE}` : BASE_TITLE;
+}
+async function shareNode(i,btn){
+  const n=nodes[i], url=shareURL(n);
+  if(navigator.share && matchMedia('(pointer: coarse)').matches){
+    try{ await navigator.share({title:`${n.name} · ${BASE_TITLE}`, url}); }catch(_){}
+    return;
+  }
+  let ok=false;
+  try{ await navigator.clipboard.writeText(url); ok=true; }catch(_){
+    const ta=document.createElement('textarea'); ta.value=url; ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:0;left:0;opacity:0'; document.body.appendChild(ta); ta.select();
+    try{ ok=document.execCommand('copy'); }catch(_){} ta.remove();
+  }
+  const lbl=btn.querySelector('.lbl');
+  lbl.textContent = ok ? 'Link copied' : 'Copy the address bar';
+  btn.classList.toggle('copied',ok);
+  clearTimeout(btn._t); btn._t=setTimeout(()=>{ lbl.textContent='Share'; btn.classList.remove('copied'); },1800);
+}
+function nodeFromHash(){
+  const raw=location.hash.slice(1); if(!raw) return null;
+  let d=raw; try{ d=decodeURIComponent(raw); }catch(_){}
+  const k=norm(d);
+  return bySlug.get(k) || nodes.find(n=>n.key===k) || bySlug.get(k.replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')) || null;
+}
+function openShared(n){
+  if(n.deg===0 && !show.loners){ show.loners=true; document.querySelector('.toggle.loners').setAttribute('aria-pressed','true'); }
+  pin(n.i,true);
+}
 function pin(i, fly=false){
   state.pinned=i; state.hover=-1; dirty=true;
+  setURL(nodes[i]);
   openCard(i,true);
   centerOn(nodes[i], fly?1.5:Math.max(cam.k,0.9));
 }
 function unpin(){
+  if(state.pinned>=0) setURL(null);
   state.pinned=-1; cardPinned=false; hideCard(); dirty=true;
 }
 
@@ -972,9 +1020,11 @@ let seen=false; try{ seen=localStorage.getItem('alist-about-seen')==='1'; }catch
 if(!seen) setTimeout(openAbout, reduceMotion?0:900);
 
 /* ---------------- go ---------------- */
-resize(); fit(false); startRandom();
+const shared=nodeFromHash();
+resize(); fit(false); if(!shared) startRandom();
 requestAnimationFrame(frame);
-if(location.hash.length>1){ const want=norm(decodeURIComponent(location.hash.slice(1))); const n=nodes.find(n=>n.key===want); if(n) setTimeout(()=>pin(n.i,true),300); }
+if(shared) setTimeout(()=>openShared(shared),300);
+addEventListener('hashchange',()=>{ const n=nodeFromHash(); if(n){ if(n.i!==state.pinned) openShared(n); } else if(!location.hash) unpin(); });
 window.__map={nodes,links,cam,state,pin,unpin,setHover,fit,sim};
 })();
 </script>

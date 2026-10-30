@@ -25,6 +25,10 @@ The page opens on a random well-connected person, zoomed in. The fit button show
 
 The portraits remain the property of their original photographers, studios, publishers and estates. They are used here only to identify the people named in the gossip list, which is itself unverified hearsay.
 
+## Sharing a person
+
+Each card has a **Share** button. Links look like `https://a-list.dasbot.com/#tom-cruise` and open the map on that person with their card showing. On phones the button opens the share sheet; elsewhere it copies the link. The address bar follows whichever card is open, so copying it works too.
+
 ## One flagged hoax
 
 **Susanna Eng** is a known internet hoax: no such actress, model or producer existed, and the claims attached to the name were fabricated. Her node is kept on the map only to show what the list claimed, and her card is marked **Hoax**.
