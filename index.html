@@ -1017,7 +1017,7 @@ about.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=
 about.addEventListener('click',e=>{ if(e.target===about) about.close(); });
 about.addEventListener('close',()=>{ try{ localStorage.setItem('alist-about-seen','1'); }catch(_){} });
 let seen=false; try{ seen=localStorage.getItem('alist-about-seen')==='1'; }catch(_){}
-if(!seen) setTimeout(openAbout, reduceMotion?0:900);
+if(!seen && !nodeFromHash()) setTimeout(openAbout, reduceMotion?0:900);
 
 /* ---------------- go ---------------- */
 const shared=nodeFromHash();
