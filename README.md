@@ -21,9 +21,13 @@ There is no build step and no server-side code. Open `index.html` from the folde
 
 The page opens on a random well-connected person, zoomed in. The fit button shows the whole map. The **Scientologists** toggle highlights the 26 people whose entries describe them as Scientologists. Portraits are lazy-loaded as you zoom in; the overview is static and starts with the original coloured dots, then keeps any portraits already loaded. Cards open on click or from search — not on hover — and load the portrait on demand. Each card has a Wikipedia link, or a Wikipedia search link when no article exists. The files are 160×160 WebP thumbnails.
 
-1894 of the 1903 people have a portrait from Wikipedia/Wikimedia or IMDb. The other 9 use a generated placeholder avatar because no reliable portrait was found. `CREDITS.md` lists the source for every file; `avatars/manifest.json` contains the same data in machine-readable form.
+1894 of the 1903 people have a portrait from Wikipedia/Wikimedia or IMDb. The other 9 use a generated placeholder avatar because no reliable portrait was found. The 292 people, bands and organisations that appear only in the feuds section don't have portraits yet; their dots show initials. `CREDITS.md` lists the source for every file; `avatars/manifest.json` contains the same data in machine-readable form.
 
 The portraits remain the property of their original photographers, studios, publishers and estates. They are used here only to identify the people named in the gossip list, which is itself unverified hearsay.
+
+## Feuds
+
+Every line of the list's "Feuds, Rivalries & Hatreds" section (at the end of `a-list.txt`) is a **Had beef with** link, with the line quoted word for word on both cards. Spelling variants are merged into the person already on the map (Babs Streisand → Barbra Streisand, Shannon Doherty → Shannen Doherty). Lines naming several people on one side link each of them. Four feuds are with no one in particular ("every comedienne living and dead") and appear only on the named person's card.
 
 ## Sharing a person
 
